@@ -63,6 +63,12 @@ namespace Validators {
 
 namespace Commands {
 
+    export const lsCommandAliases = ["ls", "list"]
+    export const upCommandAliases = ["u", "up"]
+    export const downCommandAliases = ["d", "down"]
+    export const statusCommandAliases = ["s", "status"]
+    export const helpCommandAliases = ["h", "help"]
+
     export const ls = async (rootFolder: string) => {
         const dockerComposesFullpath = `${rootFolder}/${FOLDER}`
         const result = await $`find ${dockerComposesFullpath} -name 'docker-compose.yml'  -printf "%h\n" | sort -u`.text()
@@ -127,20 +133,29 @@ namespace Commands {
             }
         } 
     }
+
+    export const help = async (dockerComposesPath: string) => {
+        console.log("Commands available:")
+        console.log("ls - List all docker-compose files")
+        console.log("s - Show the status of all docker-compose files")
+        console.log("u - Start a docker-compose file")
+        console.log("d - Stop a docker-compose file")
+        console.log('docker-compose repository directory: ', dockerComposesPath)
+    }
+    
 }
 
 const main = async () => {
     const args = Args.parse();
     
     if (args.positionals.length < 2) {
-        console.log("Please provide a valid command to run. Use 'bun h' to see the available commands")
+        console.log("Provide a valid command to run. Use 'corndocker h' to see the available commands")
         return
     }
 
     const [binPath, command, ...rest] = args.positionals;
     const binName = binPath.split("/").pop()
     const rootFolderPath = await Dir.getRootPath(binName as string)
-    const dockerImagesPath = `${rootFolderPath}/${FOLDER}`
     const dockerComposesPath = `${rootFolderPath}/${FOLDER}`
 
     if (!await Validators.dockerComposeExists()) {
@@ -148,22 +163,15 @@ const main = async () => {
         return
     }
 
-    if (!await Dir.folderExists(dockerImagesPath)) {
-        console.log(`docker-images folder not found`)
-        console.log(`creating docker-images folder in ${dockerImagesPath}`)
-        await $`mkdir ${dockerImagesPath}`
-        console.log(`docker-images folder created successfully`)
-    }
-
     if (!await Dir.folderExists(dockerComposesPath)) {
         console.log(`docker-composes folder not found`)
-        console.log(`creating docker-composes folder in ${dockerImagesPath}`)
-        await $`mkdir ${dockerImagesPath}`
+        console.log(`creating docker-composes folder in ${dockerComposesPath}`)
+        await $`mkdir ${dockerComposesPath}`
         console.log(`docker-composes folder created successfully`)
     }
     
     try {
-        if (command === 'h') {
+        if (Commands.helpCommandAliases.includes(command)) {
             console.log("Commands available:")
             console.log("ls - List all docker-compose files")
             console.log("s - Show the status of all docker-compose files")
@@ -173,17 +181,17 @@ const main = async () => {
             return
         }
 
-        if (command === "ls") {
+        if (Commands.lsCommandAliases.includes(command)) {
             await Commands.ls(rootFolderPath)
             return
         }
 
-        if (command === "s") {
+        if (Commands.statusCommandAliases.includes(command)) {
             await Commands.status(rootFolderPath)
             return
         }
 
-        if (command === "u") {
+        if (Commands.upCommandAliases.includes(command)) {
             const [composeName] = rest
             if (!composeName) {
                 console.log("Please provide a compose name")
@@ -193,7 +201,7 @@ const main = async () => {
             return
         }
 
-        if (command === "d") {
+        if (Commands.downCommandAliases.includes(command)) {
             const [composeNameDown] = rest
             if (!composeNameDown) {
                 console.log("Please provide a compose name")
@@ -203,8 +211,7 @@ const main = async () => {
             return
         }
 
-        
-        console.log("Please provide a valid command to run. Use 'bun h' to see the available commands")
+        console.log(`The command ${command} is not valid. Use 'corndocker h' to see the available commands`)
         return
 
     } catch (error) {
