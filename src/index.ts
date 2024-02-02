@@ -3,6 +3,14 @@ import { parseArgs } from "util";
 
 const FOLDER = 'docker_composes'
 
+/*
+
+TODO:
+- Add tests
+- Fix Dir.getRootPath to get a root path of bin instead of whereis
+
+*/
+
 namespace Args {
 
     export const parse = () => {
