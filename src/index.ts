@@ -136,10 +136,10 @@ namespace Commands {
 
     export const help = async (dockerComposesPath: string) => {
         console.log("Commands available:")
-        console.log("ls - List all docker-compose files")
-        console.log("s - Show the status of all docker-compose files")
-        console.log("u - Start a docker-compose file")
-        console.log("d - Stop a docker-compose file")
+        console.log("ls/list - List all docker-compose files")
+        console.log("s/status - Show the status of all docker-compose files")
+        console.log("u/up - Start a docker-compose file")
+        console.log("d/down - Stop a docker-compose file")
         console.log('docker-compose repository directory: ', dockerComposesPath)
     }
     
