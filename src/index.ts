@@ -172,12 +172,7 @@ const main = async () => {
     
     try {
         if (Commands.helpCommandAliases.includes(command)) {
-            console.log("Commands available:")
-            console.log("ls - List all docker-compose files")
-            console.log("s - Show the status of all docker-compose files")
-            console.log("u - Start a docker-compose file")
-            console.log("d - Stop a docker-compose file")
-            console.log('docker-compose repository directory: ', dockerComposesPath)
+            Commands.help(dockerComposesPath)
             return
         }
 
