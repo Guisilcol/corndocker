@@ -67,6 +67,15 @@ namespace Validators {
 
         return false
     }
+
+    export const dockerExists = async () => {
+        const exitCode = (await $`docker --version`.quiet()).exitCode
+        if (exitCode === 0) {
+            return true
+        }
+
+        return false
+    }
 }
 
 namespace Commands {
@@ -165,6 +174,11 @@ const main = async () => {
     const binName = binPath.split("/").pop()
     const rootFolderPath = await Dir.getRootPath(binName as string)
     const dockerComposesPath = `${rootFolderPath}/${FOLDER}`
+
+    if (!await Validators.dockerExists()) {
+        console.log('docker not found in your system')
+        return
+    }
 
     if (!await Validators.dockerComposeExists()) {
         console.log('docker-compose not found in your system')
