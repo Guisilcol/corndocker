@@ -106,7 +106,7 @@ namespace Commands {
             throw new Error(`Compose ${composeName} not found`)
         }
         
-        const result = await $`docker-compose -f ${composeFullPath}/docker-compose.yml up -d`
+        const result = await $`sudo docker-compose -f ${composeFullPath}/docker-compose.yml up -d`
         
         if (result.exitCode !== 0) {
             throw new Error(`Error on running docker-compose up -d: ${result.stderr.toString('utf-8')}`)
@@ -125,7 +125,7 @@ namespace Commands {
             throw new Error(`Compose ${composeName} not found`)
         }
         
-        const result = await $`docker-compose -f ${composeFullPath}/docker-compose.yml down`
+        const result = await $`sudo docker-compose -f ${composeFullPath}/docker-compose.yml down`
         
         if (result.exitCode !== 0) {
             throw new Error(`Error on running docker-compose down: ${result.stderr.toString('utf-8')}`)
@@ -142,7 +142,7 @@ namespace Commands {
         const dockerComposesNames = filesAndFolders.map((f) => f.split("/").pop())
 
         for (const name of dockerComposesNames) {
-            const status = await $`docker-compose -f ${dockerComposesFullpath}/${name}/docker-compose.yml ps`.quiet()
+            const status = await $`sudo docker-compose -f ${dockerComposesFullpath}/${name}/docker-compose.yml ps`.quiet()
 
             if (status.exitCode == 0) {
                 console.log(`Compose ${name}`)
